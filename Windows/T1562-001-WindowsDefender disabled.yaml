@@ -1,0 +1,44 @@
+title: Microsoft Defender Security Settings Disabled Through Registry
+id: 6a31d8f5-94e2-47bc-b601-8e5c2d739104
+status: experimental
+description: Detects registry modifications intended to disable or weaken Microsoft Defender Antivirus.
+author: CyberSec Study
+date: 2026/09/11
+references:
+    - https://attack.mitre.org/techniques/T1562/001/
+    - https://attack.mitre.org/techniques/T1112/
+tags:
+    - attack.defense-evasion
+    - attack.t1562.001
+    - attack.t1112
+logsource:
+    product: windows
+    category: registry_event
+
+detection:
+    selection_defender:
+        TargetObject|contains:
+            - '\SOFTWARE\Policies\Microsoft\Windows Defender\DisableAntiSpyware'
+            - '\SOFTWARE\Policies\Microsoft\Windows Defender\DisableAntiVirus'
+            - '\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection\DisableRealtimeMonitoring'
+            - '\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection\DisableBehaviorMonitoring'
+            - '\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection\DisableOnAccessProtection'
+            - '\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection\DisableScanOnRealtimeEnable'
+            - '\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet\DisableBlockAtFirstSeen'
+            - '\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet\SubmitSamplesConsent'
+
+    selection_disabled:
+        Details|contains:
+            - '0x00000001'
+            - 'DWORD (0x00000001)'
+            - '1'
+
+    condition: selection_defender and selection_disabled
+
+falsepositives:
+    - Enterprise Group Policy
+    - Defender configuration management
+    - Security testing
+    - Troubleshooting
+
+level: high
