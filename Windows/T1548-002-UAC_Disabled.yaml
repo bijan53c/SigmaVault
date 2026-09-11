@@ -1,0 +1,36 @@
+title: UAC Disabled Through Registry
+id: 2e8d9f41-6b73-4a25-a901-53c7d2e81905
+status: stable
+description: Detects modification of the Windows EnableLUA registry value to disable User Account Control.
+author: CyberSec Study
+date: 2026/09/11
+references:
+    - https://attack.mitre.org/techniques/T1548/002/
+    - https://attack.mitre.org/techniques/T1112/
+tags:
+    - attack.privilege-escalation
+    - attack.t1548.002
+    - attack.defense-evasion
+    - attack.t1112
+logsource:
+    product: windows
+    category: registry_event
+
+detection:
+    selection:
+        TargetObject|contains:
+            - '\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\EnableLUA'
+        Details:
+            - 'DWORD (0x00000000)'
+            - '0x00000000'
+            - '0'
+
+    condition: selection
+
+falsepositives:
+    - System configuration
+    - Windows deployment
+    - Enterprise imaging
+    - Administrative troubleshooting
+
+level: high
