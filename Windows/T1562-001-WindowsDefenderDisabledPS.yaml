@@ -1,0 +1,45 @@
+title: Microsoft Defender Disabled Through PowerShell
+id: 81d4e6a2-3f97-4b58-a920-6c1e5d738204
+status: stable
+description: Detects PowerShell commands attempting to disable or weaken Microsoft Defender protections.
+author: CyberSec Study
+date: 2026/09/11
+references:
+    - https://attack.mitre.org/techniques/T1562/001/
+tags:
+    - attack.defense-evasion
+    - attack.t1562.001
+logsource:
+    product: windows
+    category: process_creation
+
+detection:
+    selection_cmdlet:
+        CommandLine|contains:
+            - 'Set-MpPreference'
+            - 'Add-MpPreference'
+
+    selection_disable:
+        CommandLine|contains:
+            - 'DisableRealtimeMonitoring'
+            - 'DisableBehaviorMonitoring'
+            - 'DisableIOAVProtection'
+            - 'DisableScriptScanning'
+            - 'DisableArchiveScanning'
+            - 'DisableIntrusionPreventionSystem'
+            - 'DisableBlockAtFirstSeen'
+
+    selection_enabled:
+        CommandLine|contains:
+            - '$true'
+            - ' 1'
+            - '=1'
+
+    condition: selection_cmdlet and selection_disable and selection_enabled
+
+falsepositives:
+    - Defender configuration scripts
+    - Endpoint management
+    - Security testing
+
+level: high
