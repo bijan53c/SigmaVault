@@ -1,0 +1,39 @@
+title: Microsoft Office Application Spawns PowerShell
+id: 4c6f2f31-7a9b-4a90-b8e4-5d2c9e8b2102
+status: experimental
+description: Detects Microsoft Office applications spawning Windows PowerShell or PowerShell Core.
+author: CyberSec Study
+date: 2026/09/11
+references:
+    - https://attack.mitre.org/techniques/T1059/001/
+tags:
+    - attack.execution
+    - attack.t1059.001
+logsource:
+    product: windows
+    category: process_creation
+
+detection:
+    selection_parent:
+        ParentImage:
+            - '*\WINWORD.EXE'
+            - '*\EXCEL.EXE'
+            - '*\POWERPNT.EXE'
+            - '*\OUTLOOK.EXE'
+            - '*\MSACCESS.EXE'
+            - '*\MSPUB.EXE'
+            - '*\ONENOTE.EXE'
+
+    selection_child:
+        Image:
+            - '*\powershell.exe'
+            - '*\pwsh.exe'
+
+    condition: selection_parent and selection_child
+
+falsepositives:
+    - Legitimate Office automation
+    - Enterprise management scripts
+    - Security or IT administration tooling
+
+level: high
